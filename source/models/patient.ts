@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable no-useless-escape */
 import { Schema, model, Document } from 'mongoose'
 
 type IPatient = {

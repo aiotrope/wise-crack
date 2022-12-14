@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable no-useless-escape */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Request, Response } from 'express'
 import Joi from 'joi'
 import Patient from '../models/patient'
@@ -33,6 +28,7 @@ router.post('/', async (req: Request, res: Response) => {
   try {
     const savedPatient = await patient.save()
     res.status(201).json(savedPatient)
+    /* eslint-disable @typescript-eslint/no-explicit-any */
   } catch (error: any) {
     logger.error(error.name)
     throw Error(`${error.message}`)

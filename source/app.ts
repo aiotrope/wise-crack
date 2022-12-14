@@ -27,6 +27,8 @@ app.use(express.static('build'))
 
 app.use(helmet())
 
+app.use(require('sanitize').middleware)
+
 app.use(morganMiddleware)
 
 app.use('/api/ping', pingRouter)
