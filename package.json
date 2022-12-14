@@ -7,9 +7,9 @@
     "build": "npm run transpile",
     "start": "NODE_ENV=production node ./dist/index.js",
     "dev": "NODE_ENV=development npx ts-node-dev ./source/index.ts",
-    "lint": "eslint --ignore-path .gitignore --ext .ts,.js .",
+    "lint": "eslint --ignore-path .eslintignore './source/**/*.{ts,js}'",
     "lint:fix": "npm run lint -- --fix",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
+    "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\""
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -39,6 +39,7 @@
     "@types/http-errors": "^2.0.1",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/morgan": "^1.9.3",
+    "@types/node": "^18.11.15",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "eslint": "^8.29.0",

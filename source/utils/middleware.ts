@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Request, Response, NextFunction } from 'express'
-
 import createHttpError, { HttpError } from 'http-errors'
 
 const endPoint404 = (_req: Request, _res: Response, next: NextFunction) => {
@@ -13,7 +10,7 @@ const errorHandler = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): object | void => {
   if (error.name === 'NotFoundError') {
     res.status(404).json({ error: 'Not Found!' })
   } else if (
