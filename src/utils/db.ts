@@ -17,6 +17,10 @@ const dbConnection = () => {
   if (process.env.NODE_ENV === 'development') {
     dbURL = config.database_uri_dev
   }
+
+  if (process.env.NODE_ENV === 'production') {
+    dbURL = config.database_uri_prod
+  }
   mongoose.connect(dbURL, opts)
 
   const db = mongoose.connection

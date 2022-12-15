@@ -6,8 +6,9 @@ import dbConnection from './utils/db'
 import middlewares from './utils/middleware'
 import { morganMiddleware } from './utils/logger'
 
-import pingRouter from './controllers/ping'
-import patientRouter from './controllers/patient'
+import pingRouter from './routes/ping'
+import patientRouter from './routes/patient'
+import diagnoseRouter from './routes/diagnose'
 
 require('express-async-errors')
 
@@ -34,6 +35,8 @@ app.use(morganMiddleware)
 app.use('/api/ping', pingRouter)
 
 app.use('/api/patients', patientRouter)
+
+app.use('/api/diagnoses', diagnoseRouter)
 
 app.use(middlewares.endPoint404)
 

@@ -1,14 +1,14 @@
-import { Schema, model, Document } from 'mongoose'
+import { Schema, model } from 'mongoose'
 
-type IPatient = {
+export interface Patient {
   name: string
   occupation: string
   ssn: string
   dateOfBirth: string
   gender: string
-} & Document
+}
 
-const PatientSchema = new Schema({
+const PatientSchema = new Schema<Patient>({
   name: {
     type: String,
     required: true,
@@ -24,6 +24,7 @@ const PatientSchema = new Schema({
     type: String,
     required: true,
     trim: true,
+    unique: true,
   },
   dateOfBirth: {
     type: String,
@@ -52,6 +53,6 @@ PatientSchema.set('toJSON', {
   },
 })
 
-const Patient = model<IPatient>('Patient', PatientSchema)
+const PatientModel = model<Patient>('PatientModel', PatientSchema)
 
-export default Patient
+export default PatientModel

@@ -1,12 +1,12 @@
-import { Schema, model, Document } from 'mongoose'
+import { Schema, model } from 'mongoose'
 
-type IDiagnosis = {
+export interface Diagnose {
   code: string
   name: string
   latin?: string
-} & Document
+}
 
-const DiagnosisSchema = new Schema({
+const DiagnoseSchema = new Schema({
   code: {
     type: String,
     required: true,
@@ -16,24 +16,23 @@ const DiagnosisSchema = new Schema({
   name: {
     type: String,
     trim: true,
+    unique: true,
   },
   latin: {
     type: String,
-    required: true,
-    trim: true,
   },
 })
 
-DiagnosisSchema.virtual('id').get(function () {
+DiagnoseSchema.virtual('id').get(function () {
   return this._id.toHexString()
 })
-DiagnosisSchema.set('toJSON', {
+DiagnoseSchema.set('toJSON', {
   virtuals: true,
   transform: (_document, retObj) => {
     delete retObj.__v
   },
 })
 
-const Diagnosis = model<IDiagnosis>('Diagnosis', DiagnosisSchema)
+const DiagnoseModel = model<Diagnose>('DiagnoseModel', DiagnoseSchema)
 
-export default Diagnosis
+export default DiagnoseModel
