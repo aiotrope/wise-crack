@@ -1,58 +1,43 @@
-import { Schema, model } from 'mongoose'
+import {
+  prop,
+  getModelForClass,
+  modelOptions,
+  mongoose,
+} from '@typegoose/typegoose'
+import { Base } from '@typegoose/typegoose/lib/defaultClasses'
 
-export interface Patient {
-  name: string
-  occupation: string
-  ssn: string
-  dateOfBirth: string
-  gender: string
-}
-
-const PatientSchema = new Schema<Patient>({
-  name: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  occupation: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  ssn: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
-  },
-  dateOfBirth: {
-    type: String,
-    required: true,
-    trim: true,
-    validate: {
-      validator: (val: string) => /^\d\d\d\d\-\d\d\-\d\d$/gm.test(val),
-      message: (props: { value: string }) =>
-        `${props.value} is not valid date of birth!`,
+@modelOptions({
+  schemaOptions: {
+    toJSON: {
+      virtuals: true,
+      transform: (_document, retObj) => {
+        delete retObj.__v
+      },
     },
   },
-  gender: {
-    type: String,
-    enum: ['male', 'female', 'other'],
+})
+export class Patient implements Base {
+  _id!: mongoose.Types.ObjectId
+
+  id!: string
+
+  @prop({ required: true, unique: true, trim: true })
+  public name!: string
+
+  @prop({ required: true, trim: true })
+  public occupation!: string
+
+  @prop({ required: true, trim: true })
+  public dateOfBirth!: string
+
+  @prop({
     required: true,
-  },
-})
+    enum: ['male', 'female', 'other'],
+    trim: true,
+  })
+  public gender!: string
+}
 
-PatientSchema.virtual('id').get(function () {
-  return this._id.toHexString()
-})
-PatientSchema.set('toJSON', {
-  virtuals: true,
-  transform: (_document, retObj) => {
-    delete retObj.__v
-  },
-})
-
-const PatientModel = model<Patient>('PatientModel', PatientSchema)
+const PatientModel = getModelForClass(Patient)
 
 export default PatientModel

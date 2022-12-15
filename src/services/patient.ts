@@ -11,7 +11,7 @@ const getAllPatients = async (
   next: NextFunction
 ) => {
   try {
-    const patients: Patient[] = await PatientModel.find({})
+    const patients: Patient[] = await PatientModel.find()
     return res.status(200).json(patients)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -65,7 +65,7 @@ const addPatient = async (req: Request, res: Response, next: NextFunction) => {
     logger.warn(error.message)
     if (
       error.message ===
-      `E11000 duplicate key error collection: wiseCrackDB.patientmodels index: name_1 dup key: { name: \"${req.body.name}\" }`
+      `E11000 duplicate key error collection: wiseCrackDB.patients index: name_1 dup key: { name: \"${req.body.name}\" }`
     ) {
       return next(
         createHttpError(400, `${req.body.name} name is alredy taken!`)

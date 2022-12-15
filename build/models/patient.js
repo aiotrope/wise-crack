@@ -1,48 +1,43 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = require("mongoose");
-const PatientSchema = new mongoose_1.Schema({
-    name: {
-        type: String,
+exports.Patient = void 0;
+const tslib_1 = require("tslib");
+const typegoose_1 = require("@typegoose/typegoose");
+let Patient = class Patient {
+};
+tslib_1.__decorate([
+    (0, typegoose_1.prop)({ required: true, unique: true, trim: true }),
+    tslib_1.__metadata("design:type", String)
+], Patient.prototype, "name", void 0);
+tslib_1.__decorate([
+    (0, typegoose_1.prop)({ required: true, trim: true }),
+    tslib_1.__metadata("design:type", String)
+], Patient.prototype, "occupation", void 0);
+tslib_1.__decorate([
+    (0, typegoose_1.prop)({ required: true, trim: true }),
+    tslib_1.__metadata("design:type", String)
+], Patient.prototype, "dateOfBirth", void 0);
+tslib_1.__decorate([
+    (0, typegoose_1.prop)({
         required: true,
-        unique: true,
-        trim: true,
-    },
-    occupation: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    ssn: {
-        type: String,
-        required: true,
-        trim: true,
-        unique: true,
-    },
-    dateOfBirth: {
-        type: String,
-        required: true,
-        trim: true,
-        validate: {
-            validator: (val) => /^\d\d\d\d\-\d\d\-\d\d$/gm.test(val),
-            message: (props) => `${props.value} is not valid date of birth!`,
-        },
-    },
-    gender: {
-        type: String,
         enum: ['male', 'female', 'other'],
-        required: true,
-    },
-});
-PatientSchema.virtual('id').get(function () {
-    return this._id.toHexString();
-});
-PatientSchema.set('toJSON', {
-    virtuals: true,
-    transform: (_document, retObj) => {
-        delete retObj.__v;
-    },
-});
-const PatientModel = (0, mongoose_1.model)('PatientModel', PatientSchema);
+        trim: true,
+    }),
+    tslib_1.__metadata("design:type", String)
+], Patient.prototype, "gender", void 0);
+Patient = tslib_1.__decorate([
+    (0, typegoose_1.modelOptions)({
+        schemaOptions: {
+            toJSON: {
+                virtuals: true,
+                transform: (_document, retObj) => {
+                    delete retObj.__v;
+                },
+            },
+        },
+    })
+], Patient);
+exports.Patient = Patient;
+const PatientModel = (0, typegoose_1.getModelForClass)(Patient);
 exports.default = PatientModel;
 //# sourceMappingURL=patient.js.map

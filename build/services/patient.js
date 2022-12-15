@@ -7,7 +7,7 @@ const http_errors_1 = tslib_1.__importDefault(require("http-errors"));
 const logger_1 = tslib_1.__importDefault(require("../utils/logger"));
 const getAllPatients = (_req, res, next) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
     try {
-        const patients = yield patient_1.default.find({});
+        const patients = yield patient_1.default.find();
         return res.status(200).json(patients);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
@@ -53,7 +53,7 @@ const addPatient = (req, res, next) => tslib_1.__awaiter(void 0, void 0, void 0,
     catch (error) {
         logger_1.default.warn(error.message);
         if (error.message ===
-            `E11000 duplicate key error collection: wiseCrackDB.patientmodels index: name_1 dup key: { name: \"${req.body.name}\" }`) {
+            `E11000 duplicate key error collection: wiseCrackDB.patients index: name_1 dup key: { name: \"${req.body.name}\" }`) {
             return next((0, http_errors_1.default)(400, `${req.body.name} name is alredy taken!`));
         }
         else {
