@@ -1,30 +1,32 @@
-import {
-  prop,
-  getModelForClass,
-  modelOptions,
-  mongoose,
-} from '@typegoose/typegoose'
-import { Base } from '@typegoose/typegoose/lib/defaultClasses'
+import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose'
 
 @modelOptions({
   schemaOptions: {
+    timestamps: true,
+    versionKey: false,
+    toObject: {
+      virtuals: true,
+      transform: (_doc, ret) => {
+        ret.id = ret._id.toString()
+        delete ret._id
+      },
+    },
     toJSON: {
       virtuals: true,
-      transform: (_document, retObj) => {
-        delete retObj.__v
+      transform: (_doc, ret) => {
+        ret.id = ret._id.toString()
+        delete ret._id
       },
     },
   },
 })
-export class Diagnose implements Base {
-  _id!: mongoose.Types.ObjectId
-
-  id!: string
-
+export class Diagnose {
   @prop({ required: true, unique: true })
   public code!: string
+
   @prop({ required: true, unique: true })
   public name!: string
+
   @prop()
   public latin?: string
 }

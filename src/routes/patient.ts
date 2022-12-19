@@ -5,7 +5,9 @@ const router = express.Router()
 
 router.get('/', patientService.getAllPatients)
 
-router.get('/non-confidential', patientService.getNonConfidentialInfo)
+router.get('/public', patientService.getPublicInfo)
+
+router.get('/:id', patientService.getPatientById)
 
 router.post('/', patientService.addPatient)
 

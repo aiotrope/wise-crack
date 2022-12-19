@@ -1,41 +1,49 @@
-import {
-  prop,
-  getModelForClass,
-  modelOptions,
-  mongoose,
-} from '@typegoose/typegoose'
-import { Base } from '@typegoose/typegoose/lib/defaultClasses'
+import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose'
+
+//import { Base } from '@typegoose/typegoose/lib/defaultClasses'
+//import * as mongoose from 'mongoose'
+
+enum Gender {
+  Male = 'male',
+  Female = 'female',
+  Other = 'other',
+}
 
 @modelOptions({
   schemaOptions: {
+    timestamps: true,
+    versionKey: false,
+
     toJSON: {
       virtuals: true,
-      transform: (_document, retObj) => {
-        delete retObj.__v
+      transform: (_doc, ret) => {
+        ret.id = ret._id.toString()
+        delete ret._id
       },
     },
   },
 })
-export class Patient implements Base {
-  _id!: mongoose.Types.ObjectId
-
-  id!: string
-
+export class Patient {
   @prop({ required: true, unique: true, trim: true })
   public name!: string
+
+  @prop({ required: true, unique: true, trim: true })
+  public ssn!: string
 
   @prop({ required: true, trim: true })
   public occupation!: string
 
-  @prop({ required: true, trim: true })
-  public dateOfBirth!: string
+  @prop({ required: true })
+  public dateOfBirth!: Date
 
   @prop({
     required: true,
-    enum: ['male', 'female', 'other'],
-    trim: true,
+    enum: Gender,
   })
-  public gender!: string
+  public gender!: Gender
+
+  @prop()
+  public entries?: []
 }
 
 const PatientModel = getModelForClass(Patient)

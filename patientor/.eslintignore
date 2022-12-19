@@ -1,7 +1,4 @@
-source
-
-build/
-
-dist/
-
 node_modules
+build
+dist
+source

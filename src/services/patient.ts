@@ -1,83 +1,58 @@
-import { NextFunction, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import Joi from 'joi'
 import PatientModel, { Patient } from '../models/patient'
 import { HydratedDocument } from 'mongoose'
-import createHttpError from 'http-errors'
 import logger from '../utils/logger'
 
-const getAllPatients = async (
-  _req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const patients: Patient[] = await PatientModel.find()
-    return res.status(200).json(patients)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return next(createHttpError(500, `${error.message}`))
-  }
+const getAllPatients = async (_req: Request, res: Response) => {
+  const patients: Patient[] = await PatientModel.find()
+  if (!patients) throw Error('Problem fetching patients list!')
+  return res.status(200).json(patients)
 }
 
-const getNonConfidentialInfo = async (
-  _req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    type NonConfidential = Omit<Patient, 'ssn'>
-    const patients: NonConfidential[] = await PatientModel.find({}, { ssn: 0 })
-    logger.warn(patients)
-    return res.status(200).json(patients)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return next(createHttpError(500, `${error.message}`))
-  }
+const getPublicInfo = async (_req: Request, res: Response) => {
+  type Public = Omit<Patient, 'ssn'>
+  const patients: Public[] = await PatientModel.find({}, { ssn: 0 })
+  if (!patients) throw Error('Problem fetching patients list')
+  logger.warn(patients)
+  return res.status(200).json(patients)
 }
 
-const addPatient = async (req: Request, res: Response, next: NextFunction) => {
-  const patientSchema = Joi.object().keys({
+const getPatientById = async (req: Request, res: Response) => {
+  const id = req.params.id
+  const patient: Patient | null = await PatientModel.findById(id)
+  if (!patient) throw Error('Patient with ${id} not found!')
+  return res.status(200).json(patient)
+}
+
+const addPatient = async (req: Request, res: Response) => {
+  const schema = Joi.object().keys({
     name: Joi.string().required().trim().min(2).max(30),
     occupation: Joi.string().required().trim().min(2).max(30),
     ssn: Joi.string().required().trim().min(10).max(14),
-    dateOfBirth: Joi.string().pattern(/^\d\d\d\d\-\d\d\-\d\d$/),
+    dateOfBirth: Joi.date().required(),
     gender: Joi.string()
       .required()
       .trim()
       .valid('male')
       .valid('female')
       .valid('other'),
+    entries: Joi.optional(),
   })
-  const response = patientSchema.validate(req.body)
+  const response = schema.validate(req.body)
   if (response.error) {
     logger.error(response.error.details)
-    return next(
-      createHttpError(400, `Error: ${response.error.details[0].message}`)
-    )
+    throw Error(`${response.error.details[0].message}`)
   }
-  const patient: HydratedDocument<Patient> = new PatientModel(response.value)
 
-  try {
-    await patient.save()
-    return res.status(201).json(patient)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    logger.warn(error.message)
-    if (
-      error.message ===
-      `E11000 duplicate key error collection: wiseCrackDB.patients index: name_1 dup key: { name: \"${req.body.name}\" }`
-    ) {
-      return next(
-        createHttpError(400, `${req.body.name} name is alredy taken!`)
-      )
-    } else {
-      return next(createHttpError(400, `${error.message}`))
-    }
-  }
+  const patient: HydratedDocument<Patient> = new PatientModel(response.value)
+  await patient.save()
+  return res.status(201).json(patient)
 }
 
 export default {
   getAllPatients,
-  getNonConfidentialInfo,
+  getPublicInfo,
+  getPatientById,
   addPatient,
 }
