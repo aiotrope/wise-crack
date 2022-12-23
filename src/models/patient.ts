@@ -1,8 +1,5 @@
 import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose'
 
-//import { Base } from '@typegoose/typegoose/lib/defaultClasses'
-//import * as mongoose from 'mongoose'
-
 enum Gender {
   Male = 'male',
   Female = 'female',

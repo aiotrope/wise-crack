@@ -1,11 +1,29 @@
 import React from 'react'
-import { useStateValue } from '../state/context'
+import { useQuery } from '@tanstack/react-query'
 import Table from 'react-bootstrap/Table'
+import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
+import { orderBy } from 'lodash'
 
-export const PatientListPage: React.FC = () => {
-  const { state } = useStateValue()
-  const patients = Object.values(state.patients)
+import patientService from '../services/patient'
+import { AddPatientForm } from './AddPatientForm'
+
+export const PatientListPage = () => {
+  const [show, setShow] = React.useState(false)
+
+  const { isLoading, data, error } = useQuery({
+    queryKey: ['patients'],
+    queryFn: patientService.getAll,
+  })
+
+  if (isLoading) return <div>loading...</div>
+
+  if (error instanceof Error) return <div>{error.message}</div>
+
+  const handleClose = (): void => setShow(false)
+  const handleShow = (): void => setShow(true)
+
+  const sorted = orderBy(data, ['dateOfBirth'], ['desc'])
 
   return (
     <Container className="wrapper">
@@ -16,11 +34,10 @@ export const PatientListPage: React.FC = () => {
             <th>Name</th>
             <th>Gender</th>
             <th>Occupation</th>
-            <th>Health Rating</th>
           </tr>
         </thead>
         <tbody>
-          {patients.map(({ id, name, gender, occupation }) => (
+          {sorted.map(({ id, name, gender, occupation }) => (
             <tr key={id}>
               <td>{name}</td>
               <td>{gender}</td>
@@ -29,6 +46,12 @@ export const PatientListPage: React.FC = () => {
           ))}
         </tbody>
       </Table>
+      <div className="mt-3">
+        <Button variant="secondary" onClick={handleShow}>
+          Add New Patient
+        </Button>
+      </div>
+      <AddPatientForm show={show} onHide={handleClose} setShow={setShow} />
     </Container>
   )
 }

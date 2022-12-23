@@ -1,7 +1,9 @@
 import { Request, Response } from 'express'
-import Joi from 'joi'
-import PatientModel, { Patient } from '../models/patient'
+import * as z from 'zod'
+import { fromZodError } from 'zod-validation-error'
 import { HydratedDocument } from 'mongoose'
+
+import PatientModel, { Patient } from '../models/patient'
 import logger from '../utils/logger'
 
 const getAllPatients = async (_req: Request, res: Response) => {
@@ -26,28 +28,36 @@ const getPatientById = async (req: Request, res: Response) => {
 }
 
 const addPatient = async (req: Request, res: Response) => {
-  const schema = Joi.object().keys({
-    name: Joi.string().required().trim().min(2).max(30),
-    occupation: Joi.string().required().trim().min(2).max(30),
-    ssn: Joi.string().required().trim().min(10).max(14),
-    dateOfBirth: Joi.date().required(),
-    gender: Joi.string()
-      .required()
-      .trim()
-      .valid('male')
-      .valid('female')
-      .valid('other'),
-    entries: Joi.optional(),
-  })
-  const response = schema.validate(req.body)
-  if (response.error) {
-    logger.error(response.error.details)
-    throw Error(`${response.error.details[0].message}`)
-  }
+  const Gender = {
+    Male: 'male',
+    Female: 'female',
+    Other: 'other',
+  } as const
 
-  const patient: HydratedDocument<Patient> = new PatientModel(response.value)
-  await patient.save()
-  return res.status(201).json(patient)
+  const patientDataSchema = z.object({
+    name: z.string().trim().min(2).max(30),
+    ssn: z.string().trim().min(10).max(14),
+    dateOfBirth: z.string().regex(/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$/),
+    occupation: z.string().trim().min(2).max(30),
+    gender: z.nativeEnum(Gender),
+  })
+
+  try {
+    const response = patientDataSchema.safeParse(req.body)
+    if (!response.success) {
+      throw Error(String(response.error))
+    }
+    const patient: HydratedDocument<Patient> = new PatientModel(response.data)
+    await patient.save()
+    return res.status(201).json(patient)
+  } catch (err) {
+    if (err instanceof Error) {
+      throw Error(`${err.message}`)
+    } else if (err instanceof z.ZodError) {
+      const validationError = fromZodError(err)
+      throw Error(validationError.toString())
+    }
+  }
 }
 
 export default {
