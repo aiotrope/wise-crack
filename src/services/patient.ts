@@ -34,7 +34,7 @@ const addPatient = async (req: Request, res: Response) => {
     Other: 'other',
   } as const
 
-  const patientDataSchema = z.object({
+  const schema = z.object({
     name: z.string().trim().min(2).max(30),
     ssn: z.string().trim().min(10).max(14),
     dateOfBirth: z.string().regex(/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$/),
@@ -43,18 +43,18 @@ const addPatient = async (req: Request, res: Response) => {
   })
 
   try {
-    const response = patientDataSchema.safeParse(req.body)
+    const response = schema.safeParse(req.body)
     if (!response.success) {
       throw Error(String(response.error))
     }
     const patient: HydratedDocument<Patient> = new PatientModel(response.data)
     await patient.save()
     return res.status(201).json(patient)
-  } catch (err) {
-    if (err instanceof Error) {
-      throw Error(`${err.message}`)
-    } else if (err instanceof z.ZodError) {
-      const validationError = fromZodError(err)
+  } catch (error) {
+    if (error instanceof Error) {
+      throw Error(`${error.message}`)
+    } else if (error instanceof z.ZodError) {
+      const validationError = fromZodError(error)
       throw Error(validationError.toString())
     }
   }

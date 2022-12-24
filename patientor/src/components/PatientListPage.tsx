@@ -1,33 +1,39 @@
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
+import Spinner from 'react-bootstrap/Spinner'
 import { orderBy } from 'lodash'
 
 import patientService from '../services/patient'
 import { AddPatientForm } from './AddPatientForm'
 
-export const PatientListPage = () => {
+export const PatientListPage: React.FC = () => {
   const [show, setShow] = React.useState(false)
 
-  const { isLoading, data, error } = useQuery({
+  const { isLoading, error, data } = useQuery({
     queryKey: ['patients'],
     queryFn: patientService.getAll,
   })
 
-  if (isLoading) return <div>loading...</div>
+  const handleClose = (): void => setShow(false)
+  const handleShow = (): void => setShow(true)
+  const sorted = orderBy(data, ['dateOfBirth'], ['desc'])
+
+  if (isLoading)
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    )
 
   if (error instanceof Error) return <div>{error.message}</div>
 
-  const handleClose = (): void => setShow(false)
-  const handleShow = (): void => setShow(true)
-
-  const sorted = orderBy(data, ['dateOfBirth'], ['desc'])
-
   return (
     <Container className="wrapper">
-      <h2>Patient list</h2>
+      <h4>Patient list</h4>
       <Table responsive>
         <thead>
           <tr>
@@ -39,7 +45,9 @@ export const PatientListPage = () => {
         <tbody>
           {sorted.map(({ id, name, gender, occupation }) => (
             <tr key={id}>
-              <td>{name}</td>
+              <td>
+                <Link to={`/patients/${id}`}>{name}</Link>
+              </td>
               <td>{gender}</td>
               <td>{occupation}</td>
             </tr>

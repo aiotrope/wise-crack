@@ -9,6 +9,7 @@ import FormControl from 'react-bootstrap/FormControl'
 import FormGroup from 'react-bootstrap/FormGroup'
 import FormLabel from 'react-bootstrap/FormLabel'
 import FormSelect from 'react-bootstrap/FormSelect'
+import Spinner from 'react-bootstrap/Spinner'
 
 import patientService from '../services/patient'
 import { PatientDataSchema, PatientForm } from '../types'
@@ -59,7 +60,12 @@ export const AddPatientForm = ({ show, onHide }: Props) => {
     }
   }
 
-  if (isLoading) return <div>loading...</div>
+  if (isLoading)
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    )
   if (error instanceof Error) return <div>{error.message}</div>
 
   return (

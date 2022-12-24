@@ -15,6 +15,11 @@ const getAll = async () => {
   return patientListFromApi
 }
 
+const getById = async (id: string | undefined) => {
+  const { data: patient } = await client.get<Patient>(`/patients/${id}`)
+  return patient
+}
+
 const create = async (formData: PatientForm) => {
   const { data: newPatient } = await client.post<Patient>('/patients', formData)
   return newPatient
@@ -22,6 +27,7 @@ const create = async (formData: PatientForm) => {
 
 const patientService = {
   getAll,
+  getById,
   create,
 }
 

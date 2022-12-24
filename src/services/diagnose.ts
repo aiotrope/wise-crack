@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
-import Joi from 'joi'
+import * as z from 'zod'
+import { fromZodError } from 'zod-validation-error'
 import DiagnoseModel, { Diagnose } from '../models/diagnose'
-import logger from '../utils/logger'
+//import logger from '../utils/logger'
 
 const getAllDiagnoses = async (_req: Request, res: Response) => {
   const diagnoses: Diagnose[] = await DiagnoseModel.find({})
@@ -10,18 +11,27 @@ const getAllDiagnoses = async (_req: Request, res: Response) => {
 }
 
 const addDiagnose = async (req: Request, res: Response) => {
-  const schema = Joi.object().keys({
-    code: Joi.string().required().trim().min(4).max(5),
-    name: Joi.string().required().trim().min(5).max(100),
-    latin: Joi.string().optional().allow(''),
+  const schema1 = z.object({
+    code: z.string().trim().min(4).max(5),
+    name: z.string().trim().min(5).max(200),
+    latin: z.string().optional(),
   })
-  const response = schema.validate(req.body)
-  if (response.error) {
-    logger.error(response.error.details)
-    throw Error(`${response.error.details[0].message}`)
+
+  try {
+    const response = schema1.safeParse(req.body)
+    if (!response.success) {
+      throw Error(String(response.error))
+    }
+    const diagnose: Diagnose = await DiagnoseModel.create(response.data)
+    return res.status(201).json(diagnose)
+  } catch (error) {
+    if (error instanceof Error) {
+      throw Error(`${error.message}`)
+    } else if (error instanceof z.ZodError) {
+      const validationError = fromZodError(error)
+      throw Error(validationError.toString())
+    }
   }
-  const diagnose: Diagnose = await DiagnoseModel.create(response.value)
-  return res.status(201).json(diagnose)
 }
 
 export default {

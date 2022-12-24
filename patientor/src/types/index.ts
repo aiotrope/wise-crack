@@ -7,10 +7,15 @@ const arrContent = z.object({
 
 const partialContent = arrContent.partial()
 
-const withIdSchema = z.object({
-  id: z.string(),
+export const PatientIdParamsSchema = z.object({
+  id: z.string().min(1),
+})
+
+const withEntriesSchema = z.object({
   entries: z.array(partialContent).optional(),
 })
+
+const withIdSchema = PatientIdParamsSchema.merge(withEntriesSchema)
 
 const Gender = {
   Male: 'male',
@@ -27,6 +32,8 @@ export const PatientDataSchema = z.object({
 })
 
 export const PatientFullDataSchema = withIdSchema.merge(PatientDataSchema)
+
+export type PatientIdParams = z.infer<typeof PatientIdParamsSchema>
 
 export type PatientForm = z.infer<typeof PatientDataSchema>
 
