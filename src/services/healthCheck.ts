@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
 import Joi from 'joi'
-import HealthCheckModel, { HealthCheckEntry } from '../models/healthCheck'
 import { HydratedDocument } from 'mongoose'
+
+import { HealthCheckModel, HealthCheck } from '../models/index'
 import logger from '../utils/logger'
 
 const getAllHealthCheck = async (_req: Request, res: Response) => {
-  const healthCheck: HealthCheckEntry[] = await HealthCheckModel.find({})
+  const healthCheck: HealthCheck[] = await HealthCheckModel.find({})
   if (!healthCheck) throw Error('Problem fetching health check list!')
   return res.status(200).json(healthCheck)
 }
@@ -30,7 +31,7 @@ const addHealthCheck = async (req: Request, res: Response) => {
     throw Error(`${response.error.details[0].message}`)
   }
 
-  const healthCheck: HydratedDocument<HealthCheckEntry> = new HealthCheckModel(
+  const healthCheck: HydratedDocument<HealthCheck> = new HealthCheckModel(
     response.value
   )
   await healthCheck.save()

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import * as z from 'zod'
 import { fromZodError } from 'zod-validation-error'
-import DiagnoseModel, { Diagnose } from '../models/diagnose'
+import { DiagnoseModel, Diagnose } from '../models/index'
 //import logger from '../utils/logger'
 
 const getAllDiagnoses = async (_req: Request, res: Response) => {

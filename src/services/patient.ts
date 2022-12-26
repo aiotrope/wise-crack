@@ -3,11 +3,11 @@ import * as z from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import { HydratedDocument } from 'mongoose'
 
-import PatientModel, { Patient } from '../models/patient'
+import { PatientModel, Patient } from '../models/index'
 import logger from '../utils/logger'
 
 const getAllPatients = async (_req: Request, res: Response) => {
-  const patients: Patient[] = await PatientModel.find()
+  const patients: Patient[] = await PatientModel.find({}).populate('entries')
   if (!patients) throw Error('Problem fetching patients list!')
   return res.status(200).json(patients)
 }
@@ -22,7 +22,10 @@ const getPublicInfo = async (_req: Request, res: Response) => {
 
 const getPatientById = async (req: Request, res: Response) => {
   const id = req.params.id
-  const patient: Patient | null = await PatientModel.findById(id)
+  const patient: Patient | null = await PatientModel.findOne({
+    _id: id,
+  }).populate('entries')
+
   if (!patient) throw Error('Patient with ${id} not found!')
   return res.status(200).json(patient)
 }
@@ -40,6 +43,7 @@ const addPatient = async (req: Request, res: Response) => {
     dateOfBirth: z.string().regex(/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$/),
     occupation: z.string().trim().min(2).max(30),
     gender: z.nativeEnum(Gender),
+    entryType: z.string().optional(),
   })
 
   try {

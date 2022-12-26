@@ -5,6 +5,6 @@ const router = express.Router()
 
 router.get('/', occupationalHealthcareService.getAllOCH)
 
-router.post('/', occupationalHealthcareService.addOCH)
+router.post('/:id', occupationalHealthcareService.addOCH)
 
 export default router

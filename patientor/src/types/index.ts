@@ -1,18 +1,12 @@
 import * as z from 'zod'
 
-const arrContent = z.object({
-  name: z.string(),
-  employer: z.string(),
-})
-
-const partialContent = arrContent.partial()
-
 export const PatientIdParamsSchema = z.object({
   id: z.string().min(1),
 })
 
 const withEntriesSchema = z.object({
-  entries: z.array(partialContent).optional(),
+  entries: z.array(z.object({}).nullish()).optional(),
+  entryType: z.string(),
 })
 
 const withIdSchema = PatientIdParamsSchema.merge(withEntriesSchema)

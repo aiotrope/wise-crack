@@ -25,7 +25,7 @@ export const PatientPage: React.FC = () => {
       </Spinner>
     )
   if (patient.error instanceof Error) return <div>{patient.error?.message}</div>
-
+  console.log(patientData)
   return (
     <Container className="wrapper">
       <h4>Patient Information</h4>
