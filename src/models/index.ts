@@ -1,13 +1,12 @@
 import * as mongoose from 'mongoose'
-import { prop, getModelForClass, modelOptions, Ref } from '@typegoose/typegoose'
+import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose'
 import { Base } from '@typegoose/typegoose/lib/defaultClasses'
-//import { BaseEntry } from './base'
 
 export enum HealthCheckRating {
-  'Healthy' = 0,
-  'LowRisk' = 1,
-  'HighRisk' = 2,
-  'CriticalRisk' = 3,
+  Healthy = 0,
+  LowRisk = 1,
+  HighRisk = 2,
+  CriticalRisk = 3,
 }
 
 enum Gender {
@@ -61,17 +60,6 @@ export class Diagnose {
   public latin?: string
 }
 
-class DiagnoseCode {
-  @prop()
-  public code?: string
-
-  @prop()
-  public name?: string
-
-  @prop()
-  public latin?: string
-}
-
 export class BaseEntry implements Base {
   _id!: mongoose.Types.ObjectId
 
@@ -93,10 +81,13 @@ export class BaseEntry implements Base {
   public diagnose!: string
 
   @prop({ required: true, default: [] })
-  public diagnosisCodes!: DiagnoseCode[]
+  public diagnosisCodes!: Diagnose[]
 }
 
 export class HealthCheck extends BaseEntry {
+  @prop({ required: true, trim: true, default: EntryType.HealthCheckEntry })
+  public type!: string
+
   @prop({
     required: true,
     enum: HealthCheckRating,
@@ -114,7 +105,13 @@ class Discharge {
 }
 
 export class Hospital extends BaseEntry {
-  @prop({ required: true }) // subdocuments
+  @prop({
+    trim: true,
+    default: EntryType.Hospital,
+  })
+  public type!: string
+
+  @prop({ required: true })
   public discharge!: Discharge
 }
 
@@ -128,7 +125,7 @@ export class OccupationalHealthcare extends BaseEntry {
   @prop({ required: true, trim: true })
   public employerName!: string
 
-  @prop() // subdocuments
+  @prop()
   public sickLeave?: SickLeave
 }
 
@@ -151,11 +148,8 @@ export class Patient {
   })
   public gender!: Gender
 
-  @prop({ enum: EntryType })
-  public entryType?: string
-
-  @prop({ refPath: 'entryType' })
-  public entries?: Ref<OccupationalHealthcare | Hospital | HealthCheck>[]
+  @prop({ type: mongoose.Schema.Types.Mixed, required: true, default: [] })
+  public entries!: mongoose.Types.Array<mongoose.Mixed>
 }
 
 export const DiagnoseModel = getModelForClass(Diagnose, {

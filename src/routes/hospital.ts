@@ -5,6 +5,6 @@ const router = express.Router()
 
 router.get('/', hospitalService.getAllHopitalEntries)
 
-router.post('/', hospitalService.addHospitalEntry)
+router.post('/:id', hospitalService.addHospitalEntry)
 
 export default router

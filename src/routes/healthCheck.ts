@@ -5,6 +5,6 @@ const router = express.Router()
 
 router.get('/', healthCheckService.getAllHealthCheck)
 
-router.post('/', healthCheckService.addHealthCheck)
+router.post('/:id', healthCheckService.addHealthCheck)
 
 export default router

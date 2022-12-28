@@ -12,11 +12,10 @@ const getAllDiagnoses = async (_req: Request, res: Response) => {
 
 const addDiagnose = async (req: Request, res: Response) => {
   const schema1 = z.object({
-    code: z.string().trim().min(4).max(5),
+    code: z.string().trim().min(4).max(6),
     name: z.string().trim().min(5).max(200),
     latin: z.string().optional(),
   })
-
   try {
     const response = schema1.safeParse(req.body)
     if (!response.success) {

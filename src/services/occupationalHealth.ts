@@ -6,10 +6,8 @@ import {
   OHCModel,
   OccupationalHealthcare,
   PatientModel,
-  Patient,
   EntryType,
   DiagnoseModel,
-  Diagnose,
 } from '../models/index'
 import logger from '../utils/logger'
 
@@ -24,7 +22,7 @@ const getAllOCH = async (_req: Request, res: Response) => {
 
 const addOCH = async (req: Request, res: Response) => {
   const id = req.params.id
-  const patient: Patient | null = await PatientModel.findById(id)
+  const patient = await PatientModel.findById(id)
   const schema = Joi.object().keys({
     description: Joi.string().required().trim(),
     specialist: Joi.string().required().trim(),
@@ -42,44 +40,38 @@ const addOCH = async (req: Request, res: Response) => {
   }
   if (!patient) throw Error(`Patient with ${id} is not in the record!`)
 
+  const diagnose = await DiagnoseModel.findOne({
+    _id: req.body.diagnose,
+  })
+
+  if (!diagnose) throw Error(`${req.body.diagnose} diagnose does not exist!`)
+
   try {
-    const formData = response.value
-    const diagnoseObj: Diagnose | null = await DiagnoseModel.findOne({
-      _id: req.body.diagnose,
-    })
-    console.log('Form', formData)
-    console.log('code', formData.diagnose)
-
-    const och: HydratedDocument<OccupationalHealthcare> = new OHCModel(
-      response.value
-    )
-    const savedOch = await och.save()
-
-    if (diagnoseObj) {
-      const codeObj = {
-        code: diagnoseObj.code,
-        name: diagnoseObj.name,
-        latin: diagnoseObj.latin,
-      }
-      await OHCModel.updateOne(
-        { _id: savedOch._id },
-        {
-          $push: {
-            diagnosisCodes: { $each: [codeObj], $position: 0 },
-          },
-        }
-      )
+    const diagnoseObj = {
+      id: diagnose._id,
+      code: diagnose.code,
+      name: diagnose.name,
+      latin: diagnose.latin,
+    }
+    const data = {
+      description: response.value.description,
+      specialist: response.value.specialist,
+      type: response.value.type,
+      date: response.value.date,
+      diagnose: response.value.diagnose,
+      diagnosisCodes: diagnoseObj,
+      employerName: response.value.employerName,
+      sickLeave: response.value.sickLeave,
     }
 
-    await PatientModel.updateOne(
-      { _id: id },
-      {
-        entryType: EntryType.OccupationalHealthcare,
-        $push: { entries: { $each: [savedOch._id], $position: 0 } },
-      }
-    )
+    const ohc: HydratedDocument<OccupationalHealthcare> = new OHCModel(data)
 
-    return res.status(201).json(savedOch)
+    patient.entries.unshift(ohc)
+    await patient.save()
+
+    await ohc.save()
+
+    return res.status(201).json(ohc)
   } catch (error) {
     if (error instanceof Error) {
       throw Error(`${error.message}`)

@@ -15,3 +15,4 @@ Date: 12.12.2022
 
 - [Solution for Exercise 9.16 - 9.18](https://github.com/aiotrope/wise-crack/tree/9.14)
 
+- [Solution for Exercise 9.19 - 9.22](https://github.com/aiotrope/wise-crack/tree/9.16)
