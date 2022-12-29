@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Patient, PatientForm } from '../types'
+import { Patient, PatientForm, TDiagnoseCode } from '../types'
 
 const client = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL || '',
@@ -25,10 +25,16 @@ const create = async (formData: PatientForm) => {
   return newPatient
 }
 
+const getAllDiagnoseCodes = async () => {
+  const { data: codes } = await client.get<TDiagnoseCode[]>('/diagnoses')
+  return codes
+}
+
 const patientService = {
   getAll,
   getById,
   create,
+  getAllDiagnoseCodes,
 }
 
 export default patientService

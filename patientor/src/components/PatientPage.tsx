@@ -4,34 +4,58 @@ import { useParams } from 'react-router-dom'
 import Container from 'react-bootstrap/Container'
 import Table from 'react-bootstrap/Table'
 import Spinner from 'react-bootstrap/Spinner'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 import moment from 'moment'
 import Button from 'react-bootstrap/Button'
-import { HeartFill } from 'react-bootstrap-icons'
+import {
+  Icon0SquareFill,
+  Icon1SquareFill,
+  Icon2SquareFill,
+  Icon3SquareFill,
+} from 'react-bootstrap-icons'
 
 import patientService from '../services/patient'
+import { AddOccupationalHealthCareForm } from './AddOccupationalHealthCareForm'
+import { AddHospitalEntryForm } from './AddHospitalEntryForm'
+import { AddHealthCheckEntryForm } from './AddHealthCheckForm'
+import { PatientId } from '../types'
 
 const useFindPatient = (id: string | undefined) => {
-  return useQuery(['patient', id], () => patientService.getById(id), {
+  return useQuery([`patient/${id}`, id], () => patientService.getById(id), {
     enabled: Boolean(id),
   })
 }
 
 export const PatientPage: React.FC = () => {
-  const { id } = useParams()
+  const [showOHC, setShowOHC] = React.useState(false)
+  const [showHospital, setShowHospital] = React.useState(false)
+  const [showHealthCheck, setShowHealthCheck] = React.useState(false)
+
+  const { id } = useParams() as PatientId
   const patient = useFindPatient(id)
   const patientData = patient.data
   const entries = patientData?.entries
+  const handleClose = (): void => setShowOHC(false)
+  const handleShow = (): void => setShowOHC(true)
+
+  const handleCloseHospital = (): void => setShowHospital(false)
+  const handleShowHospital = (): void => setShowHospital(true)
+
+  const handleCloseHealthCheck = (): void => setShowHealthCheck(false)
+  const handleShowHealthCheck = (): void => setShowHealthCheck(true)
   if (patient.isLoading)
     return (
-      <Row className="justify-content-md-center">
-        <Col md="auto">
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        </Col>
-      </Row>
+      <Spinner
+        animation="grow"
+        role="status"
+        style={{
+          position: 'fixed',
+          zIndex: 1031,
+          top: '50%',
+          left: '50%',
+        }}
+      >
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
     )
   if (patient.error instanceof Error) return <div>{patient.error?.message}</div>
   console.log(entries)
@@ -65,12 +89,37 @@ export const PatientPage: React.FC = () => {
         </tbody>
       </Table>
       <h4>Add Entries</h4>
-      <section className="my-4">
-        <Button variant="light">Occupation Health Care</Button>
-        <span className="px-3">
-          <Button variant="light">Health Check</Button>
-        </span>
-        <Button variant="light">Hospital</Button>
+      <section className="my-4 d-flex flex-row">
+        <div>
+          <Button variant="light" onClick={handleShow}>
+            Occupation Health Care
+          </Button>
+          <AddOccupationalHealthCareForm
+            show={showOHC}
+            onHide={handleClose}
+            id={id}
+          />
+        </div>
+        <div className="mx-2">
+          <Button variant="light" onClick={handleShowHealthCheck}>
+            Health Check
+          </Button>
+          <AddHealthCheckEntryForm
+            show={showHealthCheck}
+            onHide={handleCloseHealthCheck}
+            id={id}
+          />
+        </div>
+        <div>
+          <Button variant="light" onClick={handleShowHospital}>
+            Hospital
+          </Button>
+          <AddHospitalEntryForm
+            show={showHospital}
+            onHide={handleCloseHospital}
+            id={id}
+          />
+        </div>
       </section>
       <h5>Entries</h5>
 
@@ -134,16 +183,24 @@ export const PatientPage: React.FC = () => {
                   <td>Health Check Rating</td>
                   <td>
                     {entry?.healthCheckRating === 0 && (
-                      <HeartFill color="green" />
+                      <>
+                        Healthy <Icon0SquareFill color="green" />
+                      </>
                     )}
                     {entry?.healthCheckRating === 1 && (
-                      <HeartFill color="blue" />
+                      <>
+                        Low Risk <Icon1SquareFill color="blue" />
+                      </>
                     )}
                     {entry?.healthCheckRating === 2 && (
-                      <HeartFill color="yellow" />
+                      <>
+                        High Risk <Icon2SquareFill color="yellow" />
+                      </>
                     )}
                     {entry?.healthCheckRating === 3 && (
-                      <HeartFill color="red" />
+                      <>
+                        Critical Risk <Icon3SquareFill color="red" />
+                      </>
                     )}
                   </td>
                 </tr>

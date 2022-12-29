@@ -154,7 +154,6 @@ export class Patient {
 
 export const DiagnoseModel = getModelForClass(Diagnose, {
   schemaOptions: {
-    timestamps: true,
     versionKey: false,
     toObject: {
       virtuals: true,
@@ -174,7 +173,6 @@ export const DiagnoseModel = getModelForClass(Diagnose, {
 })
 export const HealthCheckModel = getModelForClass(HealthCheck, {
   schemaOptions: {
-    timestamps: true,
     versionKey: false,
     toObject: {
       virtuals: true,
@@ -194,7 +192,6 @@ export const HealthCheckModel = getModelForClass(HealthCheck, {
 })
 export const HospitalEntryModel = getModelForClass(Hospital, {
   schemaOptions: {
-    timestamps: true,
     versionKey: false,
     toObject: {
       virtuals: true,
@@ -214,7 +211,6 @@ export const HospitalEntryModel = getModelForClass(Hospital, {
 })
 export const OHCModel = getModelForClass(OccupationalHealthcare, {
   schemaOptions: {
-    timestamps: true,
     versionKey: false,
     toObject: {
       virtuals: true,
@@ -234,7 +230,6 @@ export const OHCModel = getModelForClass(OccupationalHealthcare, {
 })
 export const PatientModel = getModelForClass(Patient, {
   schemaOptions: {
-    timestamps: true,
     versionKey: false,
     toObject: {
       virtuals: true,
