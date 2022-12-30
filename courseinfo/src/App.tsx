@@ -3,54 +3,80 @@ import { Container, Box, Heading, Text } from '@chakra-ui/react'
 
 import courseInfoService from './services/courseInfo'
 
-/* interface CoursePartBase {
+type CoursePartBase = {
   name: string
   exerciseCount: number
   type: string
 }
 
-interface CourseNormalPart extends CoursePartBase {
-  type: 'normal'
-  description: string
-}
-
-interface CourseProjectPart extends CoursePartBase {
-  type: 'groupProject'
+type CourseProjectPart = {
   groupProjectCount: number
 }
 
-interface CourseSubmissionPart extends CoursePartBase {
-  type: 'submission'
+type CourseSubmissionPart = {
   description: string
   exerciseSubmissionLink: string
-} */
-
-interface CoursePartBase {
-  name: string
-  exerciseCount: number
-  type: string
 }
+
+type CourseRequirementPart = {
+  requirements: string[]
+}
+
+type CoursePart = CoursePartBase &
+  CourseProjectPart &
+  CourseSubmissionPart &
+  CourseRequirementPart
 
 interface PropsHeader {
   name: string
 }
 
+interface PropsTotal {
+  courseParts: CoursePart[]
+}
+
 const Header = ({ name }: PropsHeader) => (
-  <Box>
-    <Heading as="h1">{name}</Heading>
+  <Box mb={25}>
+    <Heading as="h1" size="lg" noOfLines={1}>
+      {name}
+    </Heading>
   </Box>
 )
 
-const Content = ({ name, type, exerciseCount }: CoursePartBase) => (
+const Content = ({
+  name,
+  exerciseCount,
+  description,
+  exerciseSubmissionLink,
+  groupProjectCount,
+  requirements,
+}: CoursePart) => {
+  return (
+    <Box mb={5}>
+      <Heading as="h2" size="md" noOfLines={1}>
+        {name} {exerciseCount}
+      </Heading>
+      <Text as="i">{description}</Text>
+      {exerciseSubmissionLink && (
+        <Text>submit to {exerciseSubmissionLink}</Text>
+      )}
+      {groupProjectCount && <Text>project exercises {groupProjectCount}</Text>}
+      {requirements && <Text>required skills: {requirements.join(', ')}</Text>}
+    </Box>
+  )
+}
+
+const Total = ({ courseParts }: PropsTotal) => (
   <>
-    <Heading>{name}</Heading>
-    <Text>{type}</Text>
-    <Text>{exerciseCount}</Text>
+    <Heading as="h3" size="sm">
+      Number of exercises{' '}
+      {courseParts?.reduce((carry, part) => carry + part.exerciseCount, 0)}
+    </Heading>
   </>
 )
 
 export const App: React.FC = () => {
-  const [courses, setCourses] = React.useState([])
+  const [courseParts, setCourseParts] = React.useState<CoursePart[]>([])
   const courseName = 'Half Stack application development'
   const isComponentMounted = React.useRef(true)
 
@@ -62,23 +88,46 @@ export const App: React.FC = () => {
     const fetchCourses = async () => {
       if (isComponentMounted) {
         const courseInfo = await courseInfoService.getAll()
-        setCourses(courses.concat(courseInfo))
+        setCourseParts(courseParts.concat(courseInfo))
         return courseInfo
       }
     }
     fetchCourses()
   }, [])
-  console.log(courses)
   return (
-    <Container>
+    <Container maxW="container.sm" mt={100}>
       <Box>
         <Header name={courseName} />
 
-        {courses?.map(({ name, type, exerciseCount }, index) => (
-          <Box key={index}>
-            <Content name={name} type={type} exerciseCount={exerciseCount} />
-          </Box>
-        ))}
+        {courseParts?.map(
+          (
+            {
+              name,
+              type,
+              exerciseCount,
+              description,
+              exerciseSubmissionLink,
+              groupProjectCount,
+              requirements,
+            },
+            index
+          ) => (
+            <Box key={index}>
+              <Content
+                name={name}
+                type={type}
+                exerciseCount={exerciseCount}
+                description={description}
+                exerciseSubmissionLink={exerciseSubmissionLink}
+                groupProjectCount={groupProjectCount}
+                requirements={requirements}
+              />
+            </Box>
+          )
+        )}
+        <Box>
+          <Total courseParts={courseParts} />
+        </Box>
       </Box>
     </Container>
   )
