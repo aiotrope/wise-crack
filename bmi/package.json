@@ -1,0 +1,20 @@
+{
+  "name": "bmi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "NODE_ENV=development npx ts-node-dev ./source/index.ts",
+    "calculateBmi": "ts-node ./source/bmiCalculator.ts",
+    "calculateExercises": "ts-node ./source/exerciseCalculator.ts"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.15",
+    "@types/node": "^18.11.18",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
+  }
+}

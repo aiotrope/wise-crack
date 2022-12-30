@@ -7,6 +7,8 @@ Date: 12.12.2022
 
 #### Branches
 
+- [Solution for Exercise 9.1 - 9.3](https://github.com/aiotrope/wise-crack/tree/9.19)
+
 - [Solution for Exercise 9.8 - 9.9](https://github.com/aiotrope/wise-crack/tree/9.11)
 
 - [Solution for Exercise 9.10 - 9.11](https://github.com/aiotrope/wise-crack/tree/9.12)

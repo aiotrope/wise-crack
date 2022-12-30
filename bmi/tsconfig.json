@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node"
+  },
+  "include": ["source/**/*"],
+  "exclude": [
+    "node_modules",
+    "src/test",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "patientor/**/*",
+    "**/*.tsx",
+    "src/**/*"
+  ]
+}
