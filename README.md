@@ -1,13 +1,15 @@
 # wise-crack
 Part 9
 
-Date: 12.12.2022
+Date: 12.12.2022 - 31.12.2022
 
 ### Exercises
 
 #### Branches
 
-- [Solution for Exercise 9.1 - 9.4](https://github.com/aiotrope/wise-crack/tree/9.19)
+- [Solution for Exercise 9.1 - 9.3](https://github.com/aiotrope/wise-crack/tree/9.19)
+
+- [Solution for Exercise 9.4 - 9.5](https://github.com/aiotrope/wise-crack/tree/9.20)
 
 - [Solution for Exercise 9.8 - 9.9](https://github.com/aiotrope/wise-crack/tree/9.11)
 
@@ -73,6 +75,20 @@ Base endpoint: **/api**
 **GET /hospital** - Fetch list of hospital entries
 
 **POST /hospital/:id** - Create new hospital entry based on patient ID
+
+##### General Directories
+
+`/src`: Main backend server folder of `patientor` frontend app
+
+`/patientor`: Main frontend folder
+
+`/build`: Build directory of backend `/src`
+
+`/bmi`: Express-TS project folder for exercises `9.1-9.7` 
+
+`/courseinfo`: React-TS folder for exercises `9.14-9.15`
+
+
 
 
 

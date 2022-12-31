@@ -53,6 +53,7 @@ SickLeave = tslib_1.__decorate([
                 },
             },
         },
+        options: { allowMixed: typegoose_1.Severity.ALLOW },
     })
 ], SickLeave);
 class Diagnose {
@@ -70,8 +71,8 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], Diagnose.prototype, "latin", void 0);
 exports.Diagnose = Diagnose;
-class BaseEntry {
-}
+let BaseEntry = class BaseEntry {
+};
 tslib_1.__decorate([
     (0, typegoose_1.prop)({ required: true, trim: true, unique: true }),
     tslib_1.__metadata("design:type", String)
@@ -96,6 +97,29 @@ tslib_1.__decorate([
     (0, typegoose_1.prop)({ required: true, default: [] }),
     tslib_1.__metadata("design:type", Array)
 ], BaseEntry.prototype, "diagnosisCodes", void 0);
+BaseEntry = tslib_1.__decorate([
+    (0, typegoose_1.modelOptions)({
+        schemaOptions: {
+            timestamps: true,
+            versionKey: false,
+            toObject: {
+                virtuals: true,
+                transform: (_doc, ret) => {
+                    ret.id = ret._id.toString();
+                    delete ret._id;
+                },
+            },
+            toJSON: {
+                virtuals: true,
+                transform: (_doc, ret) => {
+                    ret.id = ret._id.toString();
+                    delete ret._id;
+                },
+            },
+        },
+        options: { allowMixed: typegoose_1.Severity.ALLOW },
+    })
+], BaseEntry);
 exports.BaseEntry = BaseEntry;
 class HealthCheck extends BaseEntry {
 }
@@ -202,6 +226,7 @@ exports.DiagnoseModel = (0, typegoose_1.getModelForClass)(Diagnose, {
             },
         },
     },
+    options: { allowMixed: typegoose_1.Severity.ALLOW },
 });
 exports.HealthCheckModel = (0, typegoose_1.getModelForClass)(HealthCheck, {
     schemaOptions: {
@@ -259,6 +284,7 @@ exports.OHCModel = (0, typegoose_1.getModelForClass)(OccupationalHealthcare, {
             },
         },
     },
+    options: { allowMixed: typegoose_1.Severity.ALLOW },
 });
 exports.PatientModel = (0, typegoose_1.getModelForClass)(Patient, {
     schemaOptions: {
@@ -278,5 +304,6 @@ exports.PatientModel = (0, typegoose_1.getModelForClass)(Patient, {
             },
         },
     },
+    options: { allowMixed: typegoose_1.Severity.ALLOW },
 });
 //# sourceMappingURL=index.js.map

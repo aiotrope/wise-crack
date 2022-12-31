@@ -1,4 +1,4 @@
-const calculateBmi = (height: number, weight: number) => {
+export const calculateBmi = (height: number, weight: number) => {
   let convertedToMeter = height / 100
   const squareOfHeight = (convertedToMeter **= 2)
   const bmi = (weight / squareOfHeight).toFixed(1)
@@ -14,3 +14,5 @@ const weightArg = Number(process.argv[3])
 const bmi = calculateBmi(heightArg, weightArg)
 
 console.log(bmi)
+
+//export default calculateBmi
