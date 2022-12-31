@@ -1,5 +1,10 @@
 import * as mongoose from 'mongoose'
-import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose'
+import {
+  prop,
+  getModelForClass,
+  modelOptions,
+  Severity,
+} from '@typegoose/typegoose'
 import { Base } from '@typegoose/typegoose/lib/defaultClasses'
 
 export enum HealthCheckRating {
@@ -40,6 +45,7 @@ export enum EntryType {
       },
     },
   },
+  options: { allowMixed: Severity.ALLOW },
 })
 class SickLeave {
   @prop({ required: true })
@@ -60,6 +66,27 @@ export class Diagnose {
   public latin?: string
 }
 
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    versionKey: false,
+    toObject: {
+      virtuals: true,
+      transform: (_doc, ret) => {
+        ret.id = ret._id.toString()
+        delete ret._id
+      },
+    },
+    toJSON: {
+      virtuals: true,
+      transform: (_doc, ret) => {
+        ret.id = ret._id.toString()
+        delete ret._id
+      },
+    },
+  },
+  options: { allowMixed: Severity.ALLOW },
+})
 export class BaseEntry implements Base {
   _id!: mongoose.Types.ObjectId
 
@@ -170,6 +197,7 @@ export const DiagnoseModel = getModelForClass(Diagnose, {
       },
     },
   },
+  options: { allowMixed: Severity.ALLOW },
 })
 export const HealthCheckModel = getModelForClass(HealthCheck, {
   schemaOptions: {
@@ -227,6 +255,7 @@ export const OHCModel = getModelForClass(OccupationalHealthcare, {
       },
     },
   },
+  options: { allowMixed: Severity.ALLOW },
 })
 export const PatientModel = getModelForClass(Patient, {
   schemaOptions: {
@@ -246,4 +275,5 @@ export const PatientModel = getModelForClass(Patient, {
       },
     },
   },
+  options: { allowMixed: Severity.ALLOW },
 })

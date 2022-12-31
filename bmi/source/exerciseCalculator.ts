@@ -1,38 +1,64 @@
-const calculateExercises = (
-  one: number,
-  two: number,
-  three: number,
-  four: number,
-  five: number,
-  six: number,
-  seven: number
-) => {
-  const arr = [one, two, three, four, five, six, seven]
+import process from 'process'
+
+const args = process.argv
+
+console.log('# of Arguements: ', args.length)
+
+const arr: string[] = []
+
+args.forEach((val) => {
+  arr.push(val)
+})
+
+const arr1 = arr.splice(0, 2)
+
+console.log(arr1.length)
+
+const arr2: number[] = []
+
+arr.forEach((val) => {
+  arr2.push(Number(val))
+})
+
+const response = () => {
   let count = 0
 
   for (let i = 0; i < arr.length; ++i) {
-    if (arr[i] !== 0) count++
+    if (arr2[i] !== 0) count++
   }
 
-  const total = arr.reduce(function (a, b) {
+  const total = arr2.reduce(function (a, b) {
     return +a + +b
   })
+
+  const average = total / arr2.length
+
+  let description = ''
+
+  if (average < 1) {
+    description += 'Keep on moving!'
+  }
+
+  if (average > 0.9 && average < 2) {
+    description += 'Normal'
+  }
+
+  if (average > 1.9 && average < 3) {
+    description += 'Optimal'
+  }
+
+  if (average > 2.9) {
+    description += 'Very Good!'
+  }
+
   return {
-    periodLength: arr.length,
+    periodLength: arr2.length,
     trainingDays: count,
     rating: 2,
-    ratingDescription: 'not too bad but could be better',
+    ratingDescription: description,
     target: 2,
-    average: total / arr.length,
+    average: average,
   }
 }
 
-const one = Number(process.argv[2])
-const two = Number(process.argv[3])
-const three = Number(process.argv[4])
-const four = Number(process.argv[5])
-const five = Number(process.argv[6])
-const six = Number(process.argv[7])
-const seven = Number(process.argv[8])
-
-console.log(calculateExercises(one, two, three, four, five, six, seven))
+console.log(response())
