@@ -88,6 +88,12 @@ Base endpoint: **/api**
 
 `/courseinfo`: React-TS folder for exercises `9.14-9.15`
 
+###### Note
+
+The codes and concepts for the Patientor frontend application are based in part on [Patientor repo](https://github.com/fullstack-hy2020/patientor) but differ in terms of basic structure, styling/UI elements, state management, and other factors.
+
+Backend utilizes MongoDB instead of JSON server/file.
+
 
 
 
